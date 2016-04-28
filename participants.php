@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (!isset($_SESSION['user_id'])) {
-    header("Location: http://regauth/authorization.php");
+    header("Location: http://diplom/authorization.php");
     exit;
 }
 $parname = "";
@@ -32,7 +32,7 @@ if (isset ($_POST['submitbutton'])) {
     $stmt->bindParam(':ideolimp', $ideolimp, PDO::PARAM_STR);
     $stmt->bindParam(':userid', $_SESSION['user_id'], PDO::PARAM_INT);
     $stmt->execute();
-    header("Location: http://regauth/participants.php");
+    header("Location: http://diplom/participants.php");
 }
 $err_del = "";
 if (isset ($_POST['deletebutton'])) {
@@ -41,7 +41,7 @@ if (isset ($_POST['deletebutton'])) {
         $delid = 0;
     if ($_SESSION['user_id'] == $connection->query("select user_id from participantACM where id_participant=" . $delid)->fetchColumn()) {
         $connection->query("delete from participantACM where id_participant=" . $delid);
-        header("Location: http://regauth/participants.php");
+        header("Location: http://diplom/participants.php");
     } else {
         $err_del = "Ошибка удаления. Проверьте правильность указанного id";
     }
