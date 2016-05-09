@@ -2,7 +2,7 @@
 require_once 'functions.php';
 session_start();
 if (isset($_SESSION['user_id'])) {
-    header("Location: http://regauth/profile.php");
+    header("Location: http://diplom/profile.php");
     exit;
 }
 $functs = new funcs();

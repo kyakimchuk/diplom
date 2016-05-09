@@ -10,7 +10,6 @@ $speciality = "";
 $group = "";
 $course = "";
 $idtimus = "";
-
 $ideolimp = "";
 $connection = new PDO('mysql:host=localhost; port=65535; dbname=diplomDB', 'root', '');
 if (isset ($_POST['submitbutton'])) {
@@ -34,6 +33,40 @@ if (isset ($_POST['submitbutton'])) {
     $stmt->execute();
     header("Location: http://diplom/participants.php");
 }
+//изменить участника
+/*$sel_id = "";
+$chparname = "";
+$chparsurname = "";
+$chspeciality = "";
+$chgroup = "";
+$chcourse = "";
+$chidtimus = "";
+$chideolimp = "";*/
+if (isset ($_POST['changebutton'])) {
+    /*$sel_id = $_POST['sel_id'];
+    $chparname = $_POST['chparname'];
+    $chparsurname = $_POST['chparsurname'];
+    $chspeciality = $_POST['chspeciality'];
+    $chgroup = $_POST['chgroup'];
+    $chcourse = $_POST['chcourse'];
+    $chidtimus = $_POST['chidtimus'];
+    $chideolimp = $_POST['chideolimp'];
+    */
+    $sql2="UPDATE participantACM set parname = :chparname, surname = :chparsurname, speciality=:chspeciality, pargroup=:chpargroup,
+           course=:chcourse, timus_id=:chidtimus, eolimp_id=:chideolimp where id_participant = :sel_id_par";
+    $stmt2 = $connection->prepare($sql2);
+    $stmt2->bindParam(':chparname', $_POST['chparname'], PDO::PARAM_STR);
+    $stmt2->bindParam(':chparsurname', $_POST['chparsurname'], PDO::PARAM_STR);
+    $stmt2->bindParam(':chspeciality', $_POST['chspeciality'], PDO::PARAM_STR);
+    $stmt2->bindParam(':chpargroup', $_POST['chgroup'], PDO::PARAM_STR);
+    $stmt2->bindParam(':chcourse', $_POST['chcourse'], PDO::PARAM_STR);
+    $stmt2->bindParam(':chidtimus', $_POST['chidtimus'], PDO::PARAM_STR);
+    $stmt2->bindParam(':chideolimp', $_POST['chideolimp'], PDO::PARAM_STR);
+    $stmt2->bindParam(':sel_id_par', $_POST['sel_id'], PDO::PARAM_INT);
+    $stmt2->execute();
+    header("Location: http://diplom/participants.php");
+}
+//удалить участника
 $err_del = "";
 if (isset ($_POST['deletebutton'])) {
     $delid = $_POST['delid'];
@@ -65,9 +98,42 @@ $count_par = count($mas_participants);
             background: #b0e0e6;
         }
     </style>
-    <script>
-        function filling_info() {
-
+    <script type="text/javascript">
+        function getXmlHttp() {
+            var xmlhttp;
+            try {
+                xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
+            } catch (e) {
+                try {
+                    xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+                } catch (E) {
+                    xmlhttp = false;
+                }
+            }
+            if (!xmlhttp && typeof XMLHttpRequest!='undefined') {
+                xmlhttp = new XMLHttpRequest();
+            }
+            return xmlhttp;
+        }
+        function changeinfo(id) {
+            var xmlhttp = getXmlHttp(); // Создаём объект XMLHTTP
+            xmlhttp.open('POST', 'chinfo.php', true); // Открываем асинхронное соединение
+            xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded'); // Отправляем кодировку
+            xmlhttp.send("id=" + encodeURIComponent(id)); // Отправляем POST-запрос
+            xmlhttp.onreadystatechange = function() { // Ждём ответа от сервера
+                if (xmlhttp.readyState == 4) { // Ответ пришёл
+                    if(xmlhttp.status == 200) { // Сервер вернул код 200 (что хорошо)
+                        var infoparticipant = JSON.parse(xmlhttp.responseText); // Преобразуем JSON-строку в массив
+                        document.getElementById('chparname').value = infoparticipant["parname"];
+                        document.getElementById('chparsurname').value = infoparticipant["surname"];
+                        document.getElementById('chspeciality').value = infoparticipant["speciality"];
+                        document.getElementById('chgroup').value = infoparticipant["pargroup"];
+                        document.getElementById('chcourse').value = infoparticipant["course"];
+                        document.getElementById('chidtimus').value = infoparticipant["timus_id"];
+                        document.getElementById('chideolimp').value = infoparticipant["eolimp_id"];
+                    }
+                }
+            };
         }
     </script>
 </head>
@@ -126,7 +192,7 @@ $count_par = count($mas_participants);
         <tr>
             <th>Id участника</th>
             <td>
-                <select id="changeid" name="sel_id" onchange="filling_info();">
+                <select id="changeid" name="sel_id" onchange=changeinfo(this.value)>
                     <option value="0" selected>Выберите id участника</option>
                     <?php for($j=0;$j<$count_par;$j++) {
                         echo "<option value='".$mas_participants[$j]['id_participant']."'>";
@@ -139,31 +205,31 @@ $count_par = count($mas_participants);
         </tr>
         <tr>
             <th>Имя</th>
-            <td><input type="text" name="chparname"></td>
+            <td><input type="text" id="chparname" name="chparname"></td>
         </tr>
         <tr>
             <th>Фамилия</th>
-            <td><input type="text" name="chparsurname"></td>
+            <td><input type="text" id="chparsurname" name="chparsurname"></td>
         </tr>
         <tr>
             <th>Специальность</th>
-            <td><input type="text" name="chspeciality"></td>
+            <td><input type="text" id="chspeciality" name="chspeciality"></td>
         </tr>
         <tr>
             <th>Группа</th>
-            <td><input type="text" name="chgroup"></td>
+            <td><input type="text" id="chgroup" name="chgroup"></td>
         </tr>
         <tr>
             <th>Курс</th>
-            <td><input type="text" name="chcourse"></td>
+            <td><input type="text" id="chcourse" name="chcourse"></td>
         </tr>
         <tr>
             <th>Id timus</th>
-            <td><input type="text" name="chidtimus"></td>
+            <td><input type="text" id="chidtimus" name="chidtimus"></td>
         </tr>
         <tr>
             <th>Id e-olimp</th>
-            <td><input type="text" name="chideolimp"></td>
+            <td><input type="text" id="chideolimp" name="chideolimp"></td>
         </tr>
     </table>
     <input type="submit" name="changebutton" value="Изменить">

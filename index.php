@@ -17,7 +17,6 @@ if (isset($_SESSION['user_id'])) {
     <meta charset="utf-8">
 </head>
 <body>
-
-
+<a href="solvedtasks.php">Решенные задачи</a><br>
 </body>
 </html>

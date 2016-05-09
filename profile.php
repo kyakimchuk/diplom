@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (!isset($_SESSION['user_id'])) {
-    header("Location: http://regauth/authorization.php");
+    header("Location: http://diplom/authorization.php");
     exit;
 }
 ?>
