@@ -117,7 +117,7 @@ $count_par = count($mas_participants);
         }
         function changeinfo(id) {
             var xmlhttp = getXmlHttp(); // Создаём объект XMLHTTP
-            xmlhttp.open('POST', 'chinfo.php', true); // Открываем асинхронное соединение
+            xmlhttp.open('POST', 'ch_info.php', true); // Открываем асинхронное соединение
             xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded'); // Отправляем кодировку
             xmlhttp.send("id=" + encodeURIComponent(id)); // Отправляем POST-запрос
             xmlhttp.onreadystatechange = function() { // Ждём ответа от сервера
