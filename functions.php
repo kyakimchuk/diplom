@@ -39,6 +39,26 @@ class funcs
         $result = $connection->query("SELECT name FROM memberlist where id_member='$id_user'")->fetchColumn();
         return $result;
     }
+    /*function file_get_contents_curl($url) {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        $data = curl_exec($ch);
+        curl_close($ch);
+        return $data;
+    }*/
+    /*function file_get_contents_curl($url, $lowercase = true, $forceTagsClosed=true, $target_charset = DEFAULT_TARGET_CHARSET, $stripRN=true, $defaultBRText=DEFAULT_BR_TEXT, $defaultSpanText=DEFAULT_SPAN_TEXT) {
+        $dom = new simple_html_dom(null, $lowercase, $forceTagsClosed, $target_charset, $stripRN, $defaultBRText, $defaultSpanText);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        $data = curl_exec($ch);
+        curl_close($ch);
+        $dom->load($data, $lowercase, $stripRN);
+        return $dom;
+    }*/
 }
 
 
