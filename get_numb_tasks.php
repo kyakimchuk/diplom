@@ -6,7 +6,7 @@ unset($_SESSION['numbers']);
 unset($_SESSION['names']);
 unset($_SESSION['complexities']);;
 $str = "https://www.e-olymp.com/ru/problems?tag=".$_POST["theme_tag"];
-    $htmltheme = file_get_html($str);
+$htmltheme = file_get_html($str);
 $tasks = $htmltheme->find('[class="eo-list__item eo-problem-row"]');
 $counttasks = count($tasks);
 $_SESSION['counttasks']= $counttasks;

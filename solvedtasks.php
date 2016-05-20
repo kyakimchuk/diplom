@@ -24,10 +24,11 @@ if (isset($_POST['submit-button'])) {
         if ($site==2) {
             $str = "https://www.e-olymp.com/ru/users/".$id_stud."/punchcard";
             $htmluser = file_get_contents_curl($str);
-            if ($exis = $htmluser->find('#punch-card a[style]')) {
+            if ($exis = $htmluser->find('#punch-card',0)) {
+                $exis2 = $exis->find('a[style]');
                 $i=0;
                 $mas=array();
-                foreach ($exis as $item) {
+                foreach ($exis2 as $item) {
                     $title= $item->title;
                     $partssolv = explode(", ", $title,2);
                     $solved_part[$i]=substr($partssolv[1], 0, -1);
@@ -37,7 +38,10 @@ if (isset($_POST['submit-button'])) {
                     $i++;
                 }
                 //формируем массив для вывода
-                $count_solved = count($solved_numbers);
+                if ($exis2)
+                    $count_solved = count($solved_numbers);
+                else
+                    $count_solved=0;
                 $k=0;
                 for ($i=0; $i<$count_solved; $i++) {
                     for ($j=0; $j<$_SESSION['counttasks']; $j++) {
@@ -90,81 +94,9 @@ if (isset($_POST['submit-button'])) {
         }
     </style>
     <script src="/js/jquery-2.2.2.js"></script>
-    <script>
-        function getXmlHttp() {
-            var xmlhttp;
-            try {
-                xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
-            } catch (e) {
-                try {
-                    xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-                } catch (E) {
-                    xmlhttp = false;
-                }
-            }
-            if (!xmlhttp && typeof XMLHttpRequest!='undefined') {
-                xmlhttp = new XMLHttpRequest();
-            }
-            return xmlhttp;
-        }
-        function themesoptions(select_index) {
-            if (select_index == 2) {
-                <?php if (empty($_SESSION['counteolimp'])) : ?>
-                var xmlhttp = getXmlHttp();
-                xmlhttp.open('POST', 'get_themes.php', true); // Открываем асинхронное соединение
-                xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-                xmlhttp.send("select_index=" + encodeURIComponent(select_index)); // Отправляем POST-запрос
-                xmlhttp.onreadystatechange = function() {
-                    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                        var infoeolimp = JSON.parse(xmlhttp.responseText);
-                        //заполняем второй выпадающий список темами
-                        var secondselect = document.getElementById('id_theme');
-                        var c=0;
-                        var elem;
-                        for (elem in infoeolimp) {
-                            c++;
-                        }
-                        c/=2;
-                        secondselect.options.length = 1;
-                        secondselect.options.length = c+1;
-                        var i;
-                        for (i=0; i<c; i++) {
-                            secondselect.options[i+1].text = infoeolimp[i];
-                            secondselect.options[i+1].value = infoeolimp[i+c];
-                        }
-                    }
-                };
-                <?php endif; ?>
-                <?php if(!empty($_SESSION['counteolimp'])) : ?>
-                //заполняем второй выпадающий список темами
-                var secondselect = document.getElementById('id_theme');
-                secondselect.options.length = 1;
-                secondselect.options.length =  <?php echo $_SESSION['counteolimp'];?> + 1;
-                var j = 1;
-                <?php
-                    for ($i=0;$i<$_SESSION['counteolimp'];$i++):
-                ?>
-                secondselect.options[j].text = "<?php echo $_SESSION['maseolimp'][$i];?>";
-                secondselect.options[j].value = "<?php echo $_SESSION['tageolimp'][$i];?>";
-                j++;
-                <?php endfor; endif;?>
-            }
-        }
-        function loadnumbtasks(theme_tag) {
-            var xmlhttp = getXmlHttp();
-            xmlhttp.open('POST', 'get_numb_tasks.php', true); // Открываем асинхронное соединение
-            xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            xmlhttp.send("theme_tag=" + encodeURIComponent(theme_tag)); // Отправляем POST-запрос
-            xmlhttp.onreadystatechange = function() {
-                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                    //var infoeolimp = JSON.parse(xmlhttp.responseText);
-                }
-            };
-        }
-    </script>
+    <script src="/js/solvedtasks_js.php"></script>
 </head>
 <body>
-
 <form method="post" action="solvedtasks.php">
     <select id="id_site" onchange="themesoptions(this.value);" name="site">
          <option value='0' selected>Выберите сайт</option>
@@ -173,9 +105,12 @@ if (isset($_POST['submit-button'])) {
     </select>
     <select id='id_theme' name="theme" onchange="loadnumbtasks(this.value);">
         <option value="0" selected>Выберите тему</option>
+    </select><br><br>
+    <select id='idstud' name="stud" onchange="">
+        <option value="0" selected>Выберите участника</option>
     </select>
     <br><br>
-    Введите id участника на выбранном сайте:
+    Или введите id участника на выбранном сайте:
     <input type="text" size="20" name="idStudSite" value="<?php echo $id_stud;?>"><br><br>
     <input type="submit" name="submit-button" value="Вывести">
 </form>
@@ -187,13 +122,15 @@ if (!empty($errors)) {
     }
 }
 if (!empty($mas)) {
-    //echo $count_solved;
     echo "<center><h3>".$id_stud."</h3></center><br>";
     echo "<center><table><caption>Решенные задачи</caption><tr><th>№ задачи</th><th>Название задачи</th><th>Решенная часть задачи,%</th><th>Сложность задачи,%</th>";
     for ($i=0; $i<$count; $i++) {
          echo "<tr><td>".$mas['number'][$i]."</td><td>".$mas['name'][$i]."</td><td>".$mas['solvpart'][$i]."</td><td>".$mas['complexitie'][$i]."</td></tr>";
     }
     echo "</table></center>";
+}
+else if ($exis) {
+    echo "<center>Пользователь не решил ни одной задачи по данной теме</center>";
 }
 
 /*
