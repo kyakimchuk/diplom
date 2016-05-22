@@ -11,7 +11,7 @@ $group = "";
 $course = "";
 $idtimus = "";
 $ideolimp = "";
-$connection = new PDO('mysql:host=localhost; port=65535; dbname=diplomDB', 'root', '');
+    $connection = new PDO('mysql:host=localhost; port=65535; dbname=diplomDB', 'root', '');
 if (isset ($_POST['submitbutton'])) {
     $parname = $_POST['parname'];
     $parsurname = $_POST['parsurname'];
