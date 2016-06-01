@@ -1,0 +1,16 @@
+table {
+    border-collapse: separate;
+}
+th div {
+    margin: 5px;
+    font-size: 1.13em;
+    font-weight: 500;
+    text-align: left;
+}
+a, a:visited {
+    color: #0000FF;
+    text-decoration: none;
+}
+tr.navigation td div {
+    margin: 0px 5px 10px 5px;
+}

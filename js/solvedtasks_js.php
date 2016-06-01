@@ -3,7 +3,7 @@
     header("Content-Type: text/html; charset=utf-8");
     $connection = new PDO('mysql:host=localhost; port=65535; dbname=diplomDB', 'root', '');
 ?>
-<script>
+
     function getXmlHttp() {
         var xmlhttp;
         try {
@@ -22,12 +22,17 @@
     }
     function themesoptions(select_index) {
     //ф-я при изменении выпад списка сайтов
-        //очищаем список участников
-        var studselect = document.getElementById('idstud');
-        studselect.options.length = 1;
         //очищаем поле с id участника
-        document.getElementById('idPartic').readOnly = false;
-        document.getElementById('idPartic').value = "";
+        var studselect = document.getElementById('idstud');
+        if (studselect.value!=0) {
+            document.getElementById('idPartic').readOnly = false;
+            document.getElementById('idPartic').value = "";
+        }
+        //очищаем список участников
+        studselect.options.length = 1;
+        //очищаем список тем
+        var secondselect = document.getElementById('id_theme');
+        secondselect.options.length = 1;
         //если выбран сайт еолимп
         if (select_index == 2) {
             //загружаем список участников (у корорых есть id на сайте еолимп)
@@ -55,14 +60,12 @@
                     if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                         var infoeolimp = JSON.parse(xmlhttp.responseText);
                         //заполняем второй выпадающий список темами
-                        var secondselect = document.getElementById('id_theme');
                         var c = 0;
                         var elem;
                         for (elem in infoeolimp) {
                             c++;
                         }
                         c /= 2;
-                        secondselect.options.length = 1;
                         secondselect.options.length = c + 1;
                         var i;
                         for (i = 0; i < c; i++) {
@@ -75,8 +78,6 @@
             //если уже загружались темы для еолимпа, то просто вывести их
             <?php if (!empty($_SESSION['counteolimp'])) : ?>
                 //заполняем второй выпадающий список темами
-                var secondselect = document.getElementById('id_theme');
-                secondselect.options.length = 1;
                 secondselect.options.length =<?php echo $_SESSION['counteolimp']; ?> +1;
                 var j = 1;
                 <?php for ($i = 0; $i < $_SESSION['counteolimp']; $i++): ?>
@@ -103,23 +104,69 @@
                     p++;
                 <?php endfor; ?>
             <?php endif; ?>
-        }
-        //если сайт не выбран
-        else if (select_index == 0) {
-            var secondselect = document.getElementById('id_theme');
-            secondselect.options.length = 1;
+            //если еще не загружались темы для тимуса, то подгрузить их и вывести
+            <?php if (empty($_SESSION['counttimus'])) : ?>
+            var xmlhttp = getXmlHttp();
+            xmlhttp.open('POST', 'get_themes.php', true); // Открываем асинхронное соединение
+            xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xmlhttp.send("select_index=" + encodeURIComponent(select_index)); // Отправляем POST-запрос
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    var infotimus = JSON.parse(xmlhttp.responseText);
+                    //заполняем второй выпадающий список темами
+                    var c = 0;
+                    var elem;
+                    for (elem in infotimus) {
+                        c++;
+                    }
+                    c /= 2;
+                    secondselect.options.length = c + 1;
+                    var i;
+                    for (i = 0; i < c; i++) {
+                        secondselect.options[i + 1].text = infotimus[i];
+                        secondselect.options[i + 1].value = infotimus[i + c];
+                    }
+                }
+            };
+            <?php endif; ?>
+            //если уже загружались темы для тимуса, то просто вывести их
+            <?php if (!empty($_SESSION['counttimus'])) : ?>
+            //заполняем второй выпадающий список темами
+            secondselect.options.length =<?php echo $_SESSION['counttimus']; ?> +1;
+            var j = 1;
+            <?php for ($i = 0; $i < $_SESSION['counttimus']; $i++): ?>
+            secondselect.options[j].text = "<?php echo $_SESSION['mastimus'][$i];?>";
+            secondselect.options[j].value = "<?php echo $_SESSION['tagtimus'][$i];?>";
+            j++;
+            <?php endfor; ?>
+            <?php endif; ?>
         }
     }
     function loadnumbtasks(theme_tag) {
     //ф-я при изменении выпад списка тем
-        var xmlhttp = getXmlHttp();
-        xmlhttp.open('POST', 'get_numb_tasks.php', true); // Открываем асинхронное соединение
-        xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        xmlhttp.send("theme_tag=" + encodeURIComponent(theme_tag)); // Отправляем POST-запрос
-        xmlhttp.onreadystatechange = function () {
-            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+        var firstselect=document.getElementById('id_site');
+        if (theme_tag!=0) {
+            if (firstselect.value==1) {
+                var xmlhttp = getXmlHttp();
+                xmlhttp.open('POST', 'get_numb_tasks_timus.php', true); // Открываем асинхронное соединение
+                xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                xmlhttp.send("theme_tag=" + encodeURIComponent(theme_tag)); // Отправляем POST-запрос
+                xmlhttp.onreadystatechange = function () {
+                    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    }
+                };
             }
-        };
+            else if (firstselect.value==2) {
+                var xmlhttp = getXmlHttp();
+                xmlhttp.open('POST', 'get_numb_tasks.php', true); // Открываем асинхронное соединение
+                xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                xmlhttp.send("theme_tag=" + encodeURIComponent(theme_tag)); // Отправляем POST-запрос
+                xmlhttp.onreadystatechange = function () {
+                    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    }
+                };
+            }
+        }
     }
     function checkedstud(site_id_stud) {
     //ф-я при изменении выпад списка участников
@@ -132,4 +179,3 @@
             document.getElementById('idPartic').readOnly = true;
         }
     }
-</script>

@@ -2,7 +2,7 @@
 require_once 'functions.php';
 session_start();
 if (isset($_SESSION['user_id'])) {
-    header("Location: http://diplom/profile.php");
+    header("Location: http://diplom/index.php");
     exit;
 }
 $functs = new funcs();
@@ -23,40 +23,116 @@ if (isset($_POST["submitbutton"])) {
 <html>
 <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" type="text/css"
-          href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <link href="css/allpages.css" rel="stylesheet">
+    <style>
+        h2.pagename div {
+            margin: 10px;
+            text-align: center;
+        }
+        div.functionsuccess {
+            width: 600px;
+            border: 1px solid rgb(46,82,31);
+            background: rgb(223,240,216);
+            padding: 15px;
+            border-radius: 9px;
+        }
+        div.functionmistake {
+            width: 600px;
+            border: 1px solid #aa0000;
+            background: #F8E4DF;
+            padding: 15px;
+            border-radius: 9px;
+        }
+
+    </style>
 </head>
 <body>
-<form class="container" method="post">
-    <div class="col-sm-4 centered">
-        <div class="row titleForms">Enter</div>
-        <div class="row">
-            <table class="tableForms">
+<table width="100%" cellpadding="0" cellspacing="0">
+    <tr style="background-color: rgb(75,74,69);">
+        <td height="40">
+            <div style="color:white; text-align: center; font-size: 1.5em; font-weight: 100;">Контроль результатов обучения олимпиадному программированию</div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table width="100%" cellpadding="0" cellspacing="0" style="border: 1px solid rgb(75,74,69);">
                 <tr>
-                    <td>Login:</td>
-                    <td><input type="text" name="login" value="" required></td>
+                    <th width="33%"><div>Примеры решений задач на строки acm.timus.ru</div><hr width="90%" align="left"></th>
+                    <th width="33%"><div>Навигация</div><hr width="90%" align="left"></th>
+                    <th width="33%"><div>Профиль</div><hr width="90%" align="left"></th>
                 </tr>
-                <tr>
-                    <td>Password:</td>
-                    <td><input type="password" name="pass" value="" required></td>
+                <tr class="navigation" valign="top">
+                    <td>
+                        <div>
+                            Поиск наиболее встечающейся подстроки:
+                            <a href="examplesolution.php?number=1723">1723</a><br>
+                            Палиндромы:
+                            <a href="examplesolution.php?number=1297">1297</a>
+                            <a href="examplesolution.php?number=1354">1354</a><br>
+                            Определение соответствия строки шаблону:
+                            <a href="examplesolution.php?number=1102">1102</a>
+                            <a href="examplesolution.php?number=1684">1684</a><br>
+                            Циклический сдвиг строки:
+                            <a href="examplesolution.php?number=1423">1423</a><br>
+                            Количество различных подстрок строки:
+                            <a href="examplesolution.php?number=1590">1590</a><br>
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <a href="index.php">Главная</a><br>
+                            <a href="solvedtasks.php">Решенные задачи</a><br>
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <?php if (isset($_SESSION['user_id'])) : ?>
+                                Вы вошли как: <a href="participants.php"><?php echo $functs->get_user_name($_SESSION['user_id']); ?></a><br>
+                                <a href="participants.php">Участники ACM</a><br>
+                                <a href='logout.php'>Выйти</a><br>
+                            <?php else : ?>
+                                Вы не вошли в систему<br>
+                                <a href='authorization.php'>Авторизация</a><br>
+                            <?php endif; ?>
+                            <a href="registration.php">Регистрация</a><br>
+                        </div>
+                    </td>
                 </tr>
             </table>
-            <div class="buttonsForms">
-                <a class="col-xs-4 btn btn-danger" href="index.php">Home</a>
-                <input class="col-xs-4 btn btn-success" type="submit" value="Login" name="submitbutton"/>
-            </div>
-        </div>
-    </div>
-    <?php
-    if ($error == 1) {
-        echo "<br><div class='clear alert alert-danger'><center>Login or password entered incorrect</center></div>";
-    }
-    if ($error == 2) {
-        echo "<br><div class='clear alert alert-success'><center>You have successfully authorized!</center></div>";
-    }
-    ?>
-
-</form>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <h2 class="pagename"><div>Вход</div></h2>
+        </td>
+    </tr>
+    <tr>
+        <td align="center">
+            <form method="post">
+                <table>
+                    <tr>
+                        <td>Логин:</td>
+                        <td><input type="text" name="login" value="" required></td>
+                    </tr>
+                    <tr>
+                        <td>Пароль:</td>
+                        <td><input type="password" name="pass" value="" required></td>
+                    </tr>
+                </table>
+                <div style="margin: 25px;">
+                    <input type="submit" value="Войти" name="submitbutton"/>
+                </div>
+                <?php
+                if ($error == 1) {
+                    echo "<br><div class='functionmistake'>Логин или пароль введены не верно!</div>";
+                }
+                if ($error == 2) {
+                    echo "<br><div class='functionsuccess'>Вход выполнен успешно!</div>";
+                }
+                ?>
+            </form>
+        </td>
+    </tr>
+</table>
 </body>
 </html>
