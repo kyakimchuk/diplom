@@ -38,6 +38,12 @@ class funcs
         $result = $connection->query("SELECT name FROM memberlist where id_member='$id_user'")->fetchColumn();
         return $result;
     }
+    function get_timus_id($id_user)
+    {
+        $connection = new PDO('mysql:host=localhost; port=65535; dbname=diplomDB', 'root', '');
+        $result = $connection->query("SELECT timus_id FROM memberlist where id_member='$id_user'")->fetchColumn();
+        return $result;
+    }
 }
 
 

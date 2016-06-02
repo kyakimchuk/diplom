@@ -15,6 +15,8 @@ $idtimus = "";
 $ideolimp = "";
 $connection = new PDO('mysql:host=localhost; port=65535; dbname=diplomDB', 'root', '');
 if (isset ($_POST['submitbutton'])) {
+    $add_temp=0;
+    $add_errors=array();
     $parname = $_POST['parname'];
     $parsurname = $_POST['parsurname'];
     $speciality = $_POST['speciality'];
@@ -22,21 +24,75 @@ if (isset ($_POST['submitbutton'])) {
     $course = $_POST['course'];
     $idtimus = $_POST['idtimus'];
     $ideolimp = $_POST['ideolimp'];
-    $sql = "INSERT INTO participantACM (parname,surname,speciality,pargroup,course,timus_id,eolimp_id,user_id) VALUES (:parname,:parsurname,:speciality,:pargroup,:course,:idtimus,:ideolimp,:userid)";
-    $stmt = $connection->prepare($sql);
-    $stmt->bindParam(':parname', $parname, PDO::PARAM_STR);
-    $stmt->bindParam(':parsurname', $parsurname, PDO::PARAM_STR);
-    $stmt->bindParam(':speciality', $speciality, PDO::PARAM_STR);
-    $stmt->bindParam(':pargroup', $group, PDO::PARAM_STR);
-    $stmt->bindParam(':course', $course, PDO::PARAM_STR);
-    $stmt->bindParam(':idtimus', $idtimus, PDO::PARAM_STR);
-    $stmt->bindParam(':ideolimp', $ideolimp, PDO::PARAM_STR);
-    $stmt->bindParam(':userid', $_SESSION['user_id'], PDO::PARAM_INT);
-    $stmt->execute();
-    header("Location: http://diplom/participants.php");
+    if (strlen($parname) > 50) {
+        $add_temp = 1;
+        $add_errors[] = "Длина имени должна быть не более чем 50 символов";
+    }
+    if(!preg_match('|^[АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюяІіЇїЄєҐґ\'-]*$|', $parname)) {
+        $add_temp = 1;
+        $add_errors[] = "Имя может содержать только русские, украинские буквы, дефисы и апострофы";
+    }
+    if (strlen($parsurname) > 50) {
+        $add_temp = 1;
+        $add_errors[] = "Длина фамилии должна быть не более чем 50 символов";
+    }
+    if(!preg_match('|^[АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюяІіЇїЄєҐґ\'-]*$|', $parsurname)) {
+        $add_temp = 1;
+        $add_errors[] = "Фамилия может содержать только русские, украинские буквы, дефисы и апострофы";
+    }
+    if (strlen($speciality) > 50) {
+        $add_temp = 1;
+        $add_errors[] = "Длина специальности должна быть не более чем 50 символов";
+    }
+    if(!preg_match('|^[АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюяІіЇїЄєҐґ\'\ -]*$|', $speciality)) {
+        $add_temp = 1;
+        $add_errors[] = "Специальность может содержать только русские, украинские буквы, дефисы, апострофы и пробелы";
+    }
+    if (strlen($group) > 10) {
+        $add_temp = 1;
+        $add_errors[] = "Длина группы должна быть не более чем 10 символов";
+    }
+    if(!preg_match('|^[0-9АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюяІіЇїЄєҐґ\'-]*$|', $group)) {
+        $add_temp = 1;
+        $add_errors[] = "Группа содержит недопустимые символы";
+    }
+    if (strlen($course) > 1 || !preg_match('|^[0-9]*$|', $course)) {
+        $add_temp = 1;
+        $add_errors[] = "Курс должен быть представлен 1 цифрой";
+    }
+    if (strlen($idtimus) > 10) {
+        $add_temp = 1;
+        $add_errors[] = "Длина timus-id должна быть не более чем 10 цифр";
+    }
+    if (!preg_match('|^[0-9]*$|', $idtimus)) {
+        $add_temp = 1;
+        $add_errors[] = "Timus-id должен содержать только цифры";
+    }
+    if (strlen($ideolimp) > 30) {
+        $add_temp = 1;
+        $add_errors[] = "Длина e-olymp-id должна быть не более чем 30 символов";
+    }
+    if(!preg_match('|^[A-Z0-9_-]*$|i', $ideolimp)) {
+        $add_temp = 1;
+        $add_errors[] = "E-olymp-id может содержать только английские буквы, цифры, знаки подчеркивания и дефисы";
+    }
+    if ($add_temp==0) {
+        $sql = "INSERT INTO participantACM (parname,surname,speciality,pargroup,course,timus_id,eolimp_id,user_id) VALUES (:parname,:parsurname,:speciality,:pargroup,:course,:idtimus,:ideolimp,:userid)";
+        $stmt = $connection->prepare($sql);
+        $stmt->bindParam(':parname', $parname, PDO::PARAM_STR);
+        $stmt->bindParam(':parsurname', $parsurname, PDO::PARAM_STR);
+        $stmt->bindParam(':speciality', $speciality, PDO::PARAM_STR);
+        $stmt->bindParam(':pargroup', $group, PDO::PARAM_STR);
+        $stmt->bindParam(':course', $course, PDO::PARAM_STR);
+        $stmt->bindParam(':idtimus', $idtimus, PDO::PARAM_STR);
+        $stmt->bindParam(':ideolimp', $ideolimp, PDO::PARAM_STR);
+        $stmt->bindParam(':userid', $_SESSION['user_id'], PDO::PARAM_INT);
+        $stmt->execute();
+        header("Location: http://diplom/participants.php");
+    }
 }
 //изменить участника
-if (isset ($_POST['changebutton'])) {
+if (isset ($_POST['changebutton']))  {
     /*$sel_id = $_POST['sel_id'];
     $chparname = $_POST['chparname'];
     $chparsurname = $_POST['chparsurname'];
@@ -46,19 +102,75 @@ if (isset ($_POST['changebutton'])) {
     $chidtimus = $_POST['chidtimus'];
     $chideolimp = $_POST['chideolimp'];
     */
-    $sql2="UPDATE participantACM set parname = :chparname, surname = :chparsurname, speciality=:chspeciality, pargroup=:chpargroup,
+    $change_temp=0;
+    $change_errors=array();
+    if (strlen($_POST['chparname']) > 50) {
+        $change_temp = 1;
+        $change_errors[] = "Длина имени должна быть не более чем 50 символов";
+    }
+    if(!preg_match('|^[АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюяІіЇїЄєҐґ\'-]*$|', $_POST['chparname'])) {
+        $change_temp = 1;
+        $change_errors[] = "Имя может содержать только русские, украинские буквы, дефисы и апострофы";
+    }
+    if (strlen($_POST['chparsurname']) > 50) {
+        $change_temp = 1;
+        $change_errors[] = "Длина фамилии должна быть не более чем 50 символов";
+    }
+    if(!preg_match('|^[АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюяІіЇїЄєҐґ\'-]*$|', $_POST['chparsurname'])) {
+        $change_temp = 1;
+        $change_errors[] = "Фамилия может содержать только русские, украинские буквы, дефисы и апострофы";
+    }
+    if (strlen($_POST['chspeciality']) > 50) {
+        $change_temp = 1;
+        $change_errors[] = "Длина специальности должна быть не более чем 50 символов";
+    }
+    if(!preg_match('|^[АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюяІіЇїЄєҐґ\'\ -]*$|', $_POST['chspeciality'])) {
+        $change_temp = 1;
+        $change_errors[] = "Специальность может содержать только русские, украинские буквы, дефисы, апострофы и пробелы";
+    }
+    if (strlen($_POST['chgroup']) > 10) {
+        $change_temp = 1;
+        $change_errors[] = "Длина группы должна быть не более чем 10 символов";
+    }
+    if(!preg_match('|^[0-9АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюяІіЇїЄєҐґ\'-]*$|', $_POST['chgroup'])) {
+        $change_temp = 1;
+        $change_errors[] = "Группа содержит недопустимые символы";
+    }
+    if (strlen($_POST['chcourse']) > 1 || !preg_match('|^[0-9]*$|', $_POST['chcourse'])) {
+        $change_temp = 1;
+        $change_errors[] = "Курс должен быть представлен 1 цифрой";
+    }
+    if (strlen($_POST['chidtimus']) > 10) {
+        $change_temp = 1;
+        $change_errors[] = "Длина timus-id должна быть не более чем 10 цифр";
+    }
+    if (!preg_match('|^[0-9]*$|', $_POST['chidtimus'])) {
+        $change_temp = 1;
+        $change_errors[] = "Timus-id должен содержать только цифры";
+    }
+    if (strlen($_POST['chideolimp']) > 30) {
+        $change_temp = 1;
+        $change_errors[] = "Длина e-olymp-id должна быть не более чем 30 символов";
+    }
+    if(!preg_match('|^[A-Z0-9_-]*$|i', $_POST['chideolimp'])) {
+        $change_temp = 1;
+        $change_errors[] = "E-olymp-id может содержать только английские буквы, цифры, знаки подчеркивания и дефисы";
+    }
+    if ($change_temp==0) {
+        $sql2 = "UPDATE participantACM set parname = :chparname, surname = :chparsurname, speciality=:chspeciality, pargroup=:chpargroup,
            course=:chcourse, timus_id=:chidtimus, eolimp_id=:chideolimp where id_participant = :sel_id_par";
-    $stmt2 = $connection->prepare($sql2);
-    $stmt2->bindParam(':chparname', $_POST['chparname'], PDO::PARAM_STR);
-    $stmt2->bindParam(':chparsurname', $_POST['chparsurname'], PDO::PARAM_STR);
-    $stmt2->bindParam(':chspeciality', $_POST['chspeciality'], PDO::PARAM_STR);
-    $stmt2->bindParam(':chpargroup', $_POST['chgroup'], PDO::PARAM_STR);
-    $stmt2->bindParam(':chcourse', $_POST['chcourse'], PDO::PARAM_STR);
-    $stmt2->bindParam(':chidtimus', $_POST['chidtimus'], PDO::PARAM_STR);
-    $stmt2->bindParam(':chideolimp', $_POST['chideolimp'], PDO::PARAM_STR);
-    $stmt2->bindParam(':sel_id_par', $_POST['sel_id'], PDO::PARAM_INT);
-    $stmt2->execute();
-    header("Location: http://diplom/participants.php");
+        $stmt2 = $connection->prepare($sql2);
+        $stmt2->bindParam(':chparname', $_POST['chparname'], PDO::PARAM_STR);
+        $stmt2->bindParam(':chparsurname', $_POST['chparsurname'], PDO::PARAM_STR);
+        $stmt2->bindParam(':chspeciality', $_POST['chspeciality'], PDO::PARAM_STR);
+        $stmt2->bindParam(':chpargroup', $_POST['chgroup'], PDO::PARAM_STR);
+        $stmt2->bindParam(':chcourse', $_POST['chcourse'], PDO::PARAM_STR);
+        $stmt2->bindParam(':chidtimus', $_POST['chidtimus'], PDO::PARAM_STR);
+        $stmt2->bindParam(':chideolimp', $_POST['chideolimp'], PDO::PARAM_STR);
+        $stmt2->bindParam(':sel_id_par', $_POST['sel_id'], PDO::PARAM_INT);
+        $stmt2->execute();
+        header("Location: http://diplom/participants.php");
+    }
 }
 //удалить участника
 $err_del = "";
@@ -103,15 +215,8 @@ $count_par = count($mas_participants);
         table.participanttable {
             border-collapse: collapse;
         }
-        table.participanttable td {
-            /*border: 1px solid black;*/
-        }
         table.participanttable th {
-            /*border: 1px solid black;
-            padding: 3px;
-            */
             text-align: left;
-
         }
     </style>
     <script type="text/javascript">
@@ -189,6 +294,7 @@ $count_par = count($mas_participants);
                         <div>
                             <a href="index.php">Главная</a><br>
                             <a href="solvedtasks.php">Решенные задачи</a><br>
+                            <a href="taskrating.php">Рейтинг по задаче</a><br>
                         </div>
                     </td>
                     <td>
@@ -246,13 +352,20 @@ $count_par = count($mas_participants);
                                     <td><input type="text" name="idtimus" value="<?php echo $idtimus; ?>"></td>
                                 </tr>
                                 <tr>
-                                    <td>Id e-olimp:</td>
+                                    <td>Id e-olymp:</td>
                                     <td><input type="text" name="ideolimp" value="<?php echo $ideolimp; ?>"></td>
                                 </tr>
                             </table>
                             <br>
                             <input type="submit" name="submitbutton" value="Добавить">
                         </form>
+                        <?php if ($add_temp == 1) {
+                            echo "Данные введены неверно. Ошибки:<br/>";
+                            for ($i = 0; $i < count($add_errors); $i++) {
+                                echo $add_errors[$i] . "<br/>";
+                            }
+                        }
+                        ?>
                     </td>
                     <td align="center" width="33%" valign="top">
                         <form method="post" action="participants.php">
@@ -261,8 +374,8 @@ $count_par = count($mas_participants);
                                 <tr>
                                     <td>Id участника:</td>
                                     <td>
-                                        <select id="changeid" name="sel_id" onchange=changeinfo(this.value)>
-                                            <option value="0" selected>Выберите id участника</option>
+                                        <select id="changeid" name="sel_id" onchange=changeinfo(this.value) required>
+                                            <option value="" selected>Выберите id участника</option>
                                             <?php for($j=0;$j<$count_par;$j++) {
                                                 echo "<option value='".$mas_participants[$j]['id_participant']."'>";
                                                 echo $mas_participants[$j]['id_participant'];
@@ -274,11 +387,11 @@ $count_par = count($mas_participants);
                                 </tr>
                                 <tr>
                                     <td>Имя:</td>
-                                    <td><input type="text" id="chparname" name="chparname"></td>
+                                    <td><input type="text" id="chparname" name="chparname" required></td>
                                 </tr>
                                 <tr>
                                     <td>Фамилия:</td>
-                                    <td><input type="text" id="chparsurname" name="chparsurname"></td>
+                                    <td><input type="text" id="chparsurname" name="chparsurname" required></td>
                                 </tr>
                                 <tr>
                                     <td>Специальность:</td>
@@ -297,13 +410,20 @@ $count_par = count($mas_participants);
                                     <td><input type="text" id="chidtimus" name="chidtimus"></td>
                                 </tr>
                                 <tr>
-                                    <td>Id e-olimp:</td>
+                                    <td>Id e-olymp:</td>
                                     <td><input type="text" id="chideolimp" name="chideolimp"></td>
                                 </tr>
                             </table>
                             <br>
                             <input type="submit" name="changebutton" value="Изменить">
                         </form>
+                        <?php if ($change_temp == 1) {
+                            echo "Данные введены неверно. Ошибки:<br/>";
+                            for ($i = 0; $i < count($change_errors); $i++) {
+                                echo $change_errors[$i] . "<br/>";
+                            }
+                        }
+                        ?>
                     </td>
                     <td align="center" width="33%" valign="top">
                         <form method="post" action="participants.php">
@@ -333,7 +453,7 @@ $count_par = count($mas_participants);
             <p>Список участников ACM</p>
             <table class='output'>
                 <?php
-                echo "<tr><th>Id участника</th><th>Имя</th><th>Фамилия</th><th>Специальность</th><th>Группа</th><th>Курс</th><th>Id timus</th><th>Id e-olimp</th></tr>";
+                echo "<tr><th>Id участника</th><th>Имя</th><th>Фамилия</th><th>Специальность</th><th>Группа</th><th>Курс</th><th>Id timus</th><th>Id e-olymp</th></tr>";
                 for ($i = 0; $i < $count_par; $i++) {
                     echo "<tr>";
                     echo "<td>" . $mas_participants[$i]['id_participant'] . "</td>";

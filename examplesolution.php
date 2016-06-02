@@ -1,5 +1,6 @@
 <?php
 require_once 'functions.php';
+require_once 'simple_html_dom.php';
 session_start();
 $functs = new funcs();
 $number = $_GET['number'];
@@ -54,6 +55,7 @@ $number = $_GET['number'];
                         <div>
                             <a href="index.php">Главная</a><br>
                             <a href="solvedtasks.php">Решенные задачи</a><br>
+							<a href="taskrating.php">Рейтинг по задаче</a><br>
                         </div>
                     </td>
                     <td>
@@ -91,6 +93,17 @@ $number = $_GET['number'];
                         <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Если какая-то последовательность повторяется в строке наибольшее количество раз, и оно, допустим, равно k, то любая из букв этой последовательности повторяется тоже k раз, и поскольку, по условию, нужно вывести любую из последовательностей, то легче вывести и искать отдельную букву, которая повторяется в строке наибольшее количество раз.</p>
                         <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; То есть решение состоит из подсчета количеств вхождений каждой буквы в строку, нахождения максимального из них и вывода соответствующей буквы.</p>
                         <p><strong>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Код программы с комментариями:</strong></p>
+						<?php
+						$counttr=0;
+						if (isset($_SESSION['user_id'])) {
+							$timusid = $functs->get_timus_id($_SESSION['user_id']);
+							$str = "http://acm.timus.ru/status.aspx?space=1&num=1723&author=" . $timusid . "&locale=ru";
+							$htmltask = file_get_html($str);
+							$exis = $htmltask->find('tr.even');
+							$counttr = count($exis);
+						}
+						if ($counttr>0):
+					    ?>
                         <pre class="cpp" style="font-family:monospace;">	<span style="color: #339900;">#include &lt;stdio.h&gt;</span>
 &nbsp;
 	<span style="color: #0000ff;">int</span> main <span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span> <span style="color: #008000;">&#123;</span>
@@ -150,6 +163,10 @@ $number = $_GET['number'];
 		<span style="color: #0000dd;">printf</span> <span style="color: #008000;">&#40;</span><span style="color: #FF0000;">&quot;%c<span style="color: #000099; font-weight: bold;">\n</span>&quot;</span>, symb<span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span>
 		<span style="color: #0000ff;">return</span> <span style="color: #0000dd;">0</span><span style="color: #008080;">;</span>
 	<span style="color: #008000;">&#125;</span></pre>
+					<?php else :
+						echo "<p style='color: red;'>Вы не можете просмотреть код программы, пока не было попыток решения этой задачи на сайте acm.timus.ru.</p>";
+						endif;
+					?>
                     </td>
                 </tr>
                 <?php elseif ($number==1297) : ?>
@@ -167,7 +184,18 @@ $number = $_GET['number'];
                             <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 1) Будем искать максимальный по длине палиндром, который состоит из нечетного количества букв. Каждую позицию в строке будем считать центром палиндрома. Дальше сравниваем две соседние от центра буквы. Если они равны, то сравниваем следующие, и т. д., пока они станут не равны, или строка закончится. Первую и последнюю буквы строки не будем учитывать при проходе во внешнем цикле, где перебираем все центры, так как у первой буквы нет соседней буквы слева, а у последнего &ndash; соседней буквы справа. Также нужно подсчитывать для каждого центра длину палиндрома (равна количеству букв, которые попарно равны от центра + сам центр), и вычислять и хранить максимальную среди них (для этого нужна переменная length), так как нам нужно найти именно максимальный по длине палиндром. Переменная m будет хранить индекс строки, с которой начинается палиндром с длиной length. Вначале length равна единице, а переменная m &ndash; нулю, то есть, если мы не найдем палиндром с длиной 3 или более, то будем считать ответом первый символ строки.</p>
                             <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 2) Будем искать палиндром, который состоит из четного количества букв, который будет больше по длине, чем тот, что нашли в первом случае. Если его нет, то ответ берем из первого случая, и длина максимального палиндрома уже хранится в переменной length, а позиция, с которой он начинается, &ndash; в переменной m.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
                             <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <strong>Код программы с комментариями:</strong></p>
-                            <pre class="cpp" style="font-family:monospace;">	<span style="color: #339900;">#include &lt;stdio.h&gt;</span>
+							<?php
+							$counttr=0;
+							if (isset($_SESSION['user_id'])) {
+								$timusid = $functs->get_timus_id($_SESSION['user_id']);
+								$str = "http://acm.timus.ru/status.aspx?space=1&num=1297&author=" . $timusid . "&locale=ru";
+								$htmltask = file_get_html($str);
+								$exis = $htmltask->find('tr.even');
+								$counttr = count($exis);
+							}
+							if ($counttr>0):
+							?>
+							<pre class="cpp" style="font-family:monospace;">	<span style="color: #339900;">#include &lt;stdio.h&gt;</span>
 	<span style="color: #0000ff;">int</span> main <span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span> <span style="color: #008000;">&#123;</span>
 		<span style="color: #0000ff;">char</span> stroka <span style="color: #008000;">&#91;</span><span style="color: #0000dd;">1001</span><span style="color: #008000;">&#93;</span><span style="color: #000080;">=</span><span style="color: #FF0000;">&quot;&quot;</span><span style="color: #008080;">;</span>
 		<span style="color: #0000ff;">int</span> i,k,length,m,pos,x<span style="color: #008080;">;</span>
@@ -222,6 +250,10 @@ $number = $_GET['number'];
 &nbsp;
 		<span style="color: #0000ff;">return</span> <span style="color: #0000dd;">0</span><span style="color: #008080;">;</span>
 	<span style="color: #008000;">&#125;</span></pre>
+							<?php else :
+								echo "<p style='color: red;'>Вы не можете просмотреть код программы, пока не было попыток решения этой задачи на сайте acm.timus.ru.</p>";
+							endif;
+							?>
                         </td>
                     </tr>
                 <?php elseif ($number==1354) : ?>
@@ -241,7 +273,18 @@ $number = $_GET['number'];
                             <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Как и в задаче 1297, центром считаем первый (левый) из двух центральных символов палиндрома. Найденную позицию центра сохраняем в переменной x1. Если ее так и не находим, то x1 приравниваем к последней позиции строки S1.</p>
                             <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Теперь нужно сравнить x и x1. Если x1&lt;x, то x приравниваем к x1, то есть в x у нас теперь хранится центр от которого мы будем считать минимальный палиндром. А в переменную x1 сохраним теперь способ (первый или второй), то есть четность количества букв палиндрома. Это понадобится при выводе ответа.</p>
                             <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <strong>Код программы с комментариями:</strong></p>
-                            <pre class="cpp" style="font-family:monospace;">	<span style="color: #339900;">#include &lt;iostream&gt;</span>
+							<?php
+							$counttr=0;
+							if (isset($_SESSION['user_id'])) {
+								$timusid = $functs->get_timus_id($_SESSION['user_id']);
+								$str = "http://acm.timus.ru/status.aspx?space=1&num=1354&author=" . $timusid . "&locale=ru";
+								$htmltask = file_get_html($str);
+								$exis = $htmltask->find('tr.even');
+								$counttr = count($exis);
+							}
+							if ($counttr>0):
+							?>
+							<pre class="cpp" style="font-family:monospace;">	<span style="color: #339900;">#include &lt;iostream&gt;</span>
 	<span style="color: #0000ff;">using</span> <span style="color: #0000ff;">namespace</span> std<span style="color: #008080;">;</span>
 &nbsp;
 	<span style="color: #0000ff;">int</span> main <span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span> <span style="color: #008000;">&#123;</span>
@@ -333,6 +376,10 @@ $number = $_GET['number'];
 		<span style="color: #666666;">//system (&quot;pause&quot;);</span>
 		<span style="color: #0000ff;">return</span> <span style="color: #0000dd;">0</span><span style="color: #008080;">;</span>
 	<span style="color: #008000;">&#125;</span></pre>
+							<?php else :
+								echo "<p style='color: red;'>Вы не можете просмотреть код программы, пока не было попыток решения этой задачи на сайте acm.timus.ru.</p>";
+							endif;
+							?>
                         </td>
                     </tr>
                 <?php elseif ($number==1102) : ?>
@@ -350,7 +397,18 @@ $number = $_GET['number'];
                             <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Допустим, мы начали проходить по строке, начиная от первого символа, и встретили в начале слово &ldquo;put&rdquo;. Мы не знаем, нужно ли его вычеркивать, так как, возможно, за этими буквами будут идти буквы &ldquo;on&rdquo;, и тогда нужно вычеркнуть все слово &ldquo;puton&rdquo; сразу, а не вычеркивать &ldquo;put&rdquo;, а потом расматривать &ldquo;on&rdquo; как часть следующего слова, например слова &ldquo;one&rdquo;.</p>
                             <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Поэтому за первый проход по строке мы вычеркиваем только все слова &ldquo;one&rdquo;, которые встретятся. Потому что, если мы встречаем три подряд идущие буквы &lsquo;o&rsquo;, &lsquo;n&rsquo;, &lsquo;e&rsquo;, то они могут принадлежать только этому слову. Буква &lsquo;e&rsquo; в других словах не встречается вообще. Далее идем заново по строке и по такому же принципу вычеркиваем все слова &ldquo;puton&rdquo;. Затем можно вычеркнуть за один следующий проход слова &ldquo;input&rdquo; и &ldquo;output&rdquo;, и за последний проход &ndash; &ldquo;in&rdquo; и &ldquo;out&rdquo;.</p>
                             <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <strong>Код программы с комментариями:</strong></p>
-                            <pre class="cpp" style="font-family:monospace;">	<span style="color: #339900;">#include &lt;iostream&gt;;</span>
+							<?php
+							$counttr=0;
+							if (isset($_SESSION['user_id'])) {
+								$timusid = $functs->get_timus_id($_SESSION['user_id']);
+								$str = "http://acm.timus.ru/status.aspx?space=1&num=1102&author=" . $timusid . "&locale=ru";
+								$htmltask = file_get_html($str);
+								$exis = $htmltask->find('tr.even');
+								$counttr = count($exis);
+							}
+							if ($counttr>0):
+							?>
+							<pre class="cpp" style="font-family:monospace;">	<span style="color: #339900;">#include &lt;iostream&gt;;</span>
 	<span style="color: #0000ff;">using</span> <span style="color: #0000ff;">namespace</span> std<span style="color: #008080;">;</span>
 &nbsp;
 	<span style="color: #0000ff;">int</span> main <span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span> <span style="color: #008000;">&#123;</span>
@@ -430,6 +488,10 @@ $number = $_GET['number'];
 		<span style="color: #666666;">//system(&quot;pause&quot;);</span>
 		<span style="color: #0000ff;">return</span> <span style="color: #0000dd;">0</span><span style="color: #008080;">;</span>
 	<span style="color: #008000;">&#125;</span></pre>
+							<?php else :
+								echo "<p style='color: red;'>Вы не можете просмотреть код программы, пока не было попыток решения этой задачи на сайте acm.timus.ru.</p>";
+							endif;
+							?>
                         </td>
                     </tr>
                 <?php elseif ($number==1684) : ?>
@@ -449,7 +511,18 @@ $number = $_GET['number'];
                             <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Пусть значение z_f[i]=5. Тогда это значение перекрывает такие индексы строки t: (i; i+5-1), т.е. в общем виде (i;i+z_f[i]-1), и отсюда получаем, что это значение перекрывает такие индексы строки Str2: (i-N-1; i-N-1+z_f[i]-1). Будем высчитывать для каждого i, начиная от N+1, значение правой границы r= i+z_f[i]-1, по которое покрывается строка Str2 в строке t. А также будем в переменной max_r хранить максимальное из значений r, чтобы знать, по какой индекс точно покрывается эта строка.</p>
                             <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Для ответа на вопрос, как именно разбить строку Str2, чтоб из нее получить префиксы Str1, если это вообще можно сделать, нам понадобится массив mas, в котором будут индексы строки Str2 в строке t, которые разбивают ее.</p>
                             <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <strong>Код программы с комментариями:</strong></p>
-                            <pre class="cpp" style="font-family:monospace;">	<span style="color: #339900;">#include &lt;iostream&gt;</span>
+							<?php
+							$counttr=0;
+							if (isset($_SESSION['user_id'])) {
+								$timusid = $functs->get_timus_id($_SESSION['user_id']);
+								$str = "http://acm.timus.ru/status.aspx?space=1&num=1684&author=" . $timusid . "&locale=ru";
+								$htmltask = file_get_html($str);
+								$exis = $htmltask->find('tr.even');
+								$counttr = count($exis);
+							}
+							if ($counttr>0):
+							?>
+							<pre class="cpp" style="font-family:monospace;">	<span style="color: #339900;">#include &lt;iostream&gt;</span>
 	<span style="color: #339900;">#include &lt;vector&gt;</span>
 	<span style="color: #0000ff;">using</span> <span style="color: #0000ff;">namespace</span> std<span style="color: #008080;">;</span>
 	<span style="color: #339900;">#include &lt;string&gt;</span>
@@ -539,6 +612,10 @@ $number = $_GET['number'];
 		<span style="color: #666666;">//system (&quot;pause&quot;);</span>
 		<span style="color: #0000ff;">return</span> <span style="color: #0000dd;">0</span><span style="color: #008080;">;</span>
 	<span style="color: #008000;">&#125;</span></pre>
+							<?php else :
+								echo "<p style='color: red;'>Вы не можете просмотреть код программы, пока не было попыток решения этой задачи на сайте acm.timus.ru.</p>";
+							endif;
+							?>
                         </td>
                     </tr>
                 <?php elseif ($number==1423) : ?>
@@ -555,10 +632,21 @@ $number = $_GET['number'];
                             <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Если найдем позицию i, начиная с которой префикс строки T входит в S, пока S не закончится, и оставшаяся часть строки T совпадает с префиксом S, то, если от количества букв в строке S отнимем найденную позицию i, получим ответ (количество циклических сдвигов, которые нужно произвести над строкой S, чтобы получить строку T).</p>
                             <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Для того, чтобы позицию i было найти проще, склеим две строки S, и будем искать в такой удвоенной строке S подстроку T. Для нахождения подстроки в строке используем алгоритмы: <strong>1) построения </strong><strong>z</strong><strong>-функции</strong> (это массив длины N, i-ый элемент которого равен наибольшему числу символов, начиная с позиции&nbsp;i, совпадающих с первыми символами строки&nbsp;S). <strong>2)</strong> <strong>п</strong><strong>оиск подстроки в строке</strong><strong>.</strong></p>
                             <p><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Алгоритм п</strong><strong>оиск</strong><strong>а</strong><strong> подстроки в строке</strong><strong> с использованием </strong><strong>z</strong><strong>-функции:</strong></p>
-                            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Задача заключается в том, чтоб найти вхождение подстроки T в удвоенную строку S. Для решения этой задачи образуем строку&nbsp;T+&lsquo; &lsquo;+S+S, &lsquo; &lsquo; - символ-разделитель (который не встречается нигде в самих строках). Посчитаем для полученной строки Z-функцию. Таким образом, получили массив длины 3*N+1, i-ый элемент которого равен наибольшему числу символов, начиная с позиции&nbsp;i, совпадающих с началом строки&nbsp;T+&lsquo; &lsquo;+S+S. Если i-ый элемент массива-z-функции равен N, то значит, начиная с позиции i, строка T входит в строку &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;T+&lsquo; &lsquo;+S+S.</p>
+                            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Задача заключается в том, чтоб найти вхождение подстроки T в удвоенную строку S. Для решения этой задачи образуем строку&nbsp;T+&lsquo; &lsquo;+S+S, &lsquo; &lsquo; - символ-разделитель (который не встречается нигде в самих строках). Посчитаем для полученной строки Z-функцию. Таким образом, получили массив длины 3*N+1, i-ый элемент которого равен наибольшему числу символов, начиная с позиции&nbsp;i, совпадающих с началом строки&nbsp;T+&lsquo; &lsquo;+S+S. Если i-ый элемент массива-z-функции равен N, то значит, начиная с позиции i, строка T входит в строку T+&lsquo; &lsquo;+S+S.</p>
                             <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Теперь, если от места, где заканчивается строка T+&lsquo; &lsquo;+S, отнять i, то получим количество циклических сдвигов, которые нужно произвести над строкой S, чтобы получить строку T. То есть ответом будет значение выражения 2*N+1-i.</p>
                             <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <strong>Код программы с комментариями:</strong></p>
-                            <pre class="cpp" style="font-family:monospace;">	<span style="color: #339900;">#include &lt;iostream&gt;</span>
+							<?php
+							$counttr=0;
+							if (isset($_SESSION['user_id'])) {
+								$timusid = $functs->get_timus_id($_SESSION['user_id']);
+								$str = "http://acm.timus.ru/status.aspx?space=1&num=1423&author=" . $timusid . "&locale=ru";
+								$htmltask = file_get_html($str);
+								$exis = $htmltask->find('tr.even');
+								$counttr = count($exis);
+							}
+							if ($counttr>0):
+							?>
+							<pre class="cpp" style="font-family:monospace;">	<span style="color: #339900;">#include &lt;iostream&gt;</span>
 	<span style="color: #339900;">#include &lt;vector&gt;</span>
 	<span style="color: #0000ff;">using</span> <span style="color: #0000ff;">namespace</span> std<span style="color: #008080;">;</span>
 	<span style="color: #339900;">#include &lt;string&gt;</span>
@@ -633,6 +721,10 @@ $number = $_GET['number'];
 		<span style="color: #666666;">//system (&quot;pause&quot;);</span>
 		<span style="color: #0000ff;">return</span> <span style="color: #0000dd;">0</span><span style="color: #008080;">;</span>
 	<span style="color: #008000;">&#125;</span></pre>
+							<?php else :
+								echo "<p style='color: red;'>Вы не можете просмотреть код программы, пока не было попыток решения этой задачи на сайте acm.timus.ru.</p>";
+							endif;
+							?>
                         </td>
                     </tr>
                 <?php elseif ($number==1590) : ?>
@@ -651,7 +743,18 @@ $number = $_GET['number'];
                             <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Наша задача &mdash; посчитать, сколько у строки&nbsp;S (i-1;N-1)&nbsp;таких префиксов, которые не встречаются в ней более нигде. Но если мы посчитаем для строки&nbsp;S (i-1;N-1) префикс-функцию p(i-1;N-1) и найдём её максимальное значение&nbsp;p<sub>max</sub>, то, очевидно, в строке S (i-1;N-1) встречается (не в начале) её префикс длины&nbsp;p<sub>max</sub>, но не большей длины. Понятно, префиксы меньшей длины уж точно встречаются в ней.</p>
                             <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Итак, мы получили, что число новых подстрок, появляющихся с учетом нового символа&nbsp;c, равно&nbsp;S (i-1;N-1).length( )+1-p<sub>max</sub>.</p>
                             <p><strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Код программы с комментариями:</strong></p>
-                            <pre class="cpp" style="font-family:monospace;">	<span style="color: #339900;">#include &lt;iostream&gt;</span>
+							<?php
+							$counttr=0;
+							if (isset($_SESSION['user_id'])) {
+								$timusid = $functs->get_timus_id($_SESSION['user_id']);
+								$str = "http://acm.timus.ru/status.aspx?space=1&num=1590&author=" . $timusid . "&locale=ru";
+								$htmltask = file_get_html($str);
+								$exis = $htmltask->find('tr.even');
+								$counttr = count($exis);
+							}
+							if ($counttr>0):
+							?>
+							<pre class="cpp" style="font-family:monospace;">	<span style="color: #339900;">#include &lt;iostream&gt;</span>
 	<span style="color: #0000ff;">using</span> <span style="color: #0000ff;">namespace</span> std<span style="color: #008080;">;</span>
 	<span style="color: #339900;">#include &lt;string&gt;</span>
 &nbsp;
@@ -695,6 +798,10 @@ $number = $_GET['number'];
 		<span style="color: #666666;">//system (&quot;pause&quot;);</span>
 		<span style="color: #0000ff;">return</span> <span style="color: #0000dd;">0</span><span style="color: #008080;">;</span>
 	<span style="color: #008000;">&#125;</span></pre>
+							<?php else :
+								echo "<p style='color: red;'>Вы не можете просмотреть код программы, пока не было попыток решения этой задачи на сайте acm.timus.ru.</p>";
+							endif;
+							?>
                         </td>
                     </tr>
                 <?php endif; ?>

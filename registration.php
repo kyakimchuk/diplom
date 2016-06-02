@@ -8,6 +8,7 @@ $rpass = "";
 $name = "";
 $surname = "";
 $email = "";
+$timusid="";
 $errors = array();
 $temp = 0;
 $connection = new PDO('mysql:host=localhost; port=65535; dbname=diplomDB', 'root', '');
@@ -19,6 +20,11 @@ if (isset($_POST["submitbutton"])) {
     $name = $_POST['name1'];
     $surname = $_POST['surname'];
     $email = $_POST['email'];
+    $timusid = $_POST['timusid'];
+    if(!preg_match('|^[A-Z0-9_]+$|i', $login)) {
+        $temp = 1;
+        $errors[] = "Логин может содержать только английские буквы, цифры и знаки подчеркивания";
+    }
     if (strlen($login) > 50) {
         $temp = 1;
         $errors[] = "Длина логина должна быть не более чем 50 символов";
@@ -38,9 +44,17 @@ if (isset($_POST["submitbutton"])) {
         $temp = 1;
         $errors[] = "Пароли не совпадают";
     }
+    if(!preg_match('|^[АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюяІіЇїЄєҐґ\'-]+$|', $name)) {
+        $temp = 1;
+        $errors[] = "Имя может содержать только русские, украинские буквы, дефисы и апострофы";
+    }
     if (strlen($name) > 50) {
         $temp = 1;
         $errors[] = "Длина имени должна быть не более чем 50 символов";
+    }
+    if(!preg_match('|^[АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюяІіЇїЄєҐґ\'-]+$|', $surname)) {
+        $temp = 1;
+        $errors[] = "Фамилия может содержать только русские, украинские буквы, дефисы и апострофы";
     }
     if (strlen($surname) > 50) {
         $temp = 1;
@@ -50,15 +64,24 @@ if (isset($_POST["submitbutton"])) {
         $temp = 1;
         $errors[] = "Длина email-адреса должна быть не более чем 50 символов";
     }
+    if (strlen($timusid) > 10) {
+        $temp = 1;
+        $errors[] = "Длина timus-id должна быть не более чем 10 цифр";
+    }
+    if(!preg_match('|^[0-9]*$|', $timusid)) {
+        $temp = 1;
+        $errors[] = "Timus-id может содержать только цифры";
+    }
     if ($temp == 0) {
         $hashed_pass = md5($pass);
-        $sql = "INSERT INTO memberlist ( login, pass, name, surname, email) VALUES (:login,:pass,:name,:surname,:email)";
+        $sql = "INSERT INTO memberlist ( login, pass, name, surname, email, timus_id) VALUES (:login,:pass,:name,:surname,:email,:timusid)";
         $stmt = $connection->prepare($sql);
         $stmt->bindParam(':login', $login, PDO::PARAM_STR);
         $stmt->bindParam(':pass', $hashed_pass, PDO::PARAM_STR);
         $stmt->bindParam(':name', $name, PDO::PARAM_STR);
         $stmt->bindParam(':surname', $surname, PDO::PARAM_STR);
         $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+        $stmt->bindParam(':timusid', $timusid, PDO::PARAM_INT);
         $stmt->execute();
         $temp = 2;
     }
@@ -125,6 +148,7 @@ if (isset($_POST["submitbutton"])) {
                         <div>
                             <a href="index.php">Главная</a><br>
                             <a href="solvedtasks.php">Решенные задачи</a><br>
+                            <a href="taskrating.php">Рейтинг по задаче</a><br>
                         </div>
                     </td>
                     <td>
@@ -153,6 +177,7 @@ if (isset($_POST["submitbutton"])) {
                 $name = "";
                 $surname = "";
                 $email = "";
+                $timusid = "";
             endif;
             ?>
             <h2 class="pagename"><div>Регистрация</div></h2>
@@ -185,6 +210,10 @@ if (isset($_POST["submitbutton"])) {
                     <tr>
                         <td>Email-адрес:</td>
                         <td><input type="email" name="email" value="<?php echo $email; ?>" required></td>
+                    </tr>
+                    <tr>
+                        <td>Timus-id:</td>
+                        <td><input type="text" name="timusid" value="<?php echo $timusid; ?>"></td>
                     </tr>
                 </table>
                 <div style="margin: 25px;">

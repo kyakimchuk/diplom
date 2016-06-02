@@ -82,6 +82,7 @@ if (isset($_POST["submitbutton"])) {
                         <div>
                             <a href="index.php">Главная</a><br>
                             <a href="solvedtasks.php">Решенные задачи</a><br>
+                            <a href="taskrating.php">Рейтинг по задаче</a><br>
                         </div>
                     </td>
                     <td>
