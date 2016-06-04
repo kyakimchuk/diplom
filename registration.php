@@ -36,9 +36,9 @@ if (isset($_POST["submitbutton"])) {
             $errors[] = "Такой логин уже существует";
         }
     }
-    if (strlen($pass) > 50) {
+    if (strlen($pass) > 50 || strlen($pass)<6) {
         $temp = 1;
-        $errors[] = "Длина пароля должна быть не более чем 50 символов";
+        $errors[] = "Длина пароля должна быть не менее 6 символов и не более 50 символов";
     }
     if ($pass != $rpass) {
         $temp = 1;
