@@ -93,15 +93,6 @@ if (isset ($_POST['submitbutton'])) {
 }
 //изменить участника
 if (isset ($_POST['changebutton']))  {
-    /*$sel_id = $_POST['sel_id'];
-    $chparname = $_POST['chparname'];
-    $chparsurname = $_POST['chparsurname'];
-    $chspeciality = $_POST['chspeciality'];
-    $chgroup = $_POST['chgroup'];
-    $chcourse = $_POST['chcourse'];
-    $chidtimus = $_POST['chidtimus'];
-    $chideolimp = $_POST['chideolimp'];
-    */
     $change_temp=0;
     $change_errors=array();
     if (strlen($_POST['chparname']) > 50) {

@@ -20,7 +20,7 @@ if (isset($_POST['submit-button'])) {
     if (!is_numeric($numbtask)) {
         $errors[]="Номер задачи должен состоять только из цифр";
     }
-    else if ($numbtask<1000 || $numbtask>2077) {
+    else if ($numbtask<1000 || $numbtask>2089) {
         $errors[]="Задачи с таким номером на сайте acm.timus.ru не существует";
     }
     if (empty($errors)) {
@@ -31,7 +31,7 @@ if (isset($_POST['submit-button'])) {
             $mas_rating[$i]['id']=$_POST['participants'][$i];
             $exis = $htmltask->find('table.status tr[class!=header]');
             $count_exis = count($exis);
-            if ($count_exis==0) {
+                    if ($count_exis==0) {
                 $mas_rating[$i]['ac']="Нет";
                 $mas_rating[$i]['time']="";
                 $mas_rating[$i]['mem']="";
